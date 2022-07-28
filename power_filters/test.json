@@ -1,0 +1,20 @@
+{
+    "Butterworth": {
+        "name": "Butterworth",
+        "a1": 1,
+        "a2": 1,
+        "b2": 1
+    },
+    "Bessel": {
+        "name": "Bessel",
+        "a1": 0.756,
+        "a2": 0.9996,
+        "b2": 0.4772
+    },
+    "Critical Damping": {
+        "name": "Critical Damping",
+        "a1": 0.5098,
+        "a2": 1.0197,
+        "b2": 0.2599
+    }
+}
