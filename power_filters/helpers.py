@@ -4,6 +4,11 @@ import numpy as np
 
 
 class SecondOrder:
+
+    @property
+    def C1():
+        return calc_C1
+
     @staticmethod
     def calc_L1(C1, w0, parameters):
         num = parameters.a1*parameters.b2

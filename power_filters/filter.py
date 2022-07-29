@@ -6,22 +6,24 @@ from helpers import *
 
 
 class Filter:
-    def __init__(self, order: int, filter: str, damping_stage=2, **kwargs):
+    def __init__(self, order: int, optimisation: str, damping_stage=2, **kwargs):
+        self._load_params()
+
         self.order = order
-        self.filter_type = filter
+        self.optimisation = optimisation
         self._damping_stage = damping_stage
 
-        self._load_params()
         self._assign_params()
         self._assign_props(kwargs)
 
-    def design_filter(**kwargs):
+    def design_filter(self, **kwargs):
+        self._assign_params()
         self._assign_props(kwargs)
 
     def _load_params(self):
         try:
             with open('parameters.json') as _param_file:
-                _params = json.load(_param_file)
+                self._params = json.load(_param_file)
         except:
             pass
 
@@ -45,8 +47,10 @@ class Filter:
 
     def _assign_params(self):
         self._init_params()
-        for __param in _params[self.filter_type][self.order]['parameters'].keys():
-            self._filter_params[__param] = _params[self.filter_type][self.order]['parameters'][__param]
+        if self.optimisation and self.order:
+            for __param in self._params[self.optimisation][str(self.order)]['parameters'].keys():
+                self._filter_params[__param] = self._params[self.optimisation][str(
+                    self.order)]['parameters'][__param]
 
     def _assign_props(self, props):
         self._init_props()
@@ -54,21 +58,22 @@ class Filter:
             self._primary_props[__prop] = props[__prop]
 
     @property
-    def filter_type(self):
-        return self._filter_type
+    def optimisation(self):
+        if not hasattr(self, '_optimisation'):
+            self._optimisation = 'critical'
+        return self._optimisation
 
-    @filter_type.setter
-    def filter_type(self, filter):
+    @optimisation.setter
+    def optimisation(self, optimisation):
         try:
-            self._filter_type = str(filter_type)
+            self._optimisation = str(optimisation)
         except ValueError:
-            raise ValueError("filter type must be a string") from None
-
+            raise ValueError("filter optimisation must be a string") from None
         self._assign_params()
 
     @property
     def order(self):
-        if not self._order:
+        if not hasattr(self, '_order'):
             self._order = 2
         return self._order
 
@@ -78,7 +83,6 @@ class Filter:
             self._order = int(order)
         except ValueError:
             raise ValueError("order must be of type integer") from None
-
         self._assign_params()
 
     @property

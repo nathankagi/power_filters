@@ -1,6 +1,6 @@
 {
   "butterworth": {
-    "type": "butterworth",
+    "optimisation": "butterworth",
     "2": {
       "order": 2,
       "description": "2nd-order low-pass filter",
@@ -24,7 +24,7 @@
     }
   },
   "bessel": {
-    "type": "bessel",
+    "optimisation": "bessel",
     "2": {
       "order": 2,
       "description": "2nd-order low-pass filter",
@@ -48,7 +48,7 @@
     }
   },
   "critical": {
-    "type": "critical",
+    "optimisation": "critical",
     "2": {
       "order": 2,
       "description": "2nd-order low-pass filter",
