@@ -7,7 +7,7 @@ Created on Wed Jul 27 15:06:47 2022
 
 import json
 
-# Data to be written
+# # Data to be written
 butt = {
         'name': 'Butterworth',
         'a1': 1,
@@ -35,6 +35,26 @@ filters = {
         crit['name'] : crit
         }
 
+# def TestClass:
+#     def __init__(self, *args, **kwargs):
+#         pass
+    
+#     def design_filter(self, **kwargs):
+#         """
+        
+
+#         Parameters
+#         ----------
+#         **kwargs : TYPE
+#             DESCRIPTION.
+
+#         Returns
+#         -------
+#         None.
+
+#         """
+#         self._assign_params()
+#         self._assign_props(kwargs)
     
 # with open("test.json", "w") as outfile:
 #     json.dump(filters, outfile)
@@ -50,13 +70,24 @@ filters = {
     #     print(i['type'])
     #     print(i['order'])
     
-# def concatenate(**kwargs):
-#     result = ""
-#     # Iterating over the keys of the Python kwargs dictionary
-#     key = kwargs['a']
-#     print(key)
-#     for arg in kwargs:
-#         result += arg
-#     return result
 
-# print(concatenate(a="Real", b="Python", c="Is", d="Great", e="!"))
+from filter import Filter
+filt = Filter(order = 4, optimisation='butterworth')
+# print(filt._filter_params)
+# filt.order = 2
+# print(filt._filter_params)
+# filt.order = 4
+# print(filt._filter_params)
+# print(filt._filter_props)
+print(filt.design_filter(order=2, C1=10e-6, w0=10000))
+
+
+
+
+
+
+
+
+
+
+

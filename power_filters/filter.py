@@ -2,12 +2,18 @@
 
 import numpy as np
 import json
+import functools
+
 from helpers import *
 
 
 class Filter:
-    def __init__(self, order: int, optimisation: str, damping_stage=2, **kwargs):
+    def __init__(self, order: int, optimisation: str, damping_stage=2, *args, **kwargs):
         self._load_params()
+
+        # class default variables
+        self.__default_order = 2
+        self.__default_optimisation = 'critical'
 
         self.order = order
         self.optimisation = optimisation
@@ -16,9 +22,26 @@ class Filter:
         self._assign_params()
         self._assign_props(kwargs)
 
-    def design_filter(self, **kwargs):
+    def design_filter(self, *args, **kwargs):
+
+        self._check_args(kwargs)
+
+        if 'order' in kwargs:
+            self.order = kwargs.pop('order')
+        if 'optimisation' in kwargs:
+            self.optimisation = kwargs.pop('optimisation')
+
         self._assign_params()
         self._assign_props(kwargs)
+
+        for __prop in self._filter_props:
+            if self._filter_props[__prop] is None:
+                self._filter_props[__prop] = getattr(
+                    self._filter_eqs['Class'], str(__prop))(self._filter_props, self._filter_params)
+
+        # should return dict containing filter information
+        #   - filter parameters, properties, etc.
+        return self._filter_props
 
     def _load_params(self):
         try:
@@ -28,22 +51,27 @@ class Filter:
             pass
 
     def _init_params(self):
-        self._filter_params = {
-            "a1": None,
-            "a2": None,
-            "b2": None,
-            "a3": None,
-            "b3": None
-        }
+        self._filter_params = {}
 
     def _init_props(self):
-        self._primary_props = {
-            'C1': None,
-            'L1': None,
-            'w0': None,
-            'C2': None,
-            'L2': None
-        }
+        if self.order == 2:
+            self._filter_eqs = {
+                'Class': SecondOrder,
+                'C1': SecondOrder.C1,
+                'L1': SecondOrder.L1,
+                'w0': SecondOrder.w0,
+                'Cd': SecondOrder.Cd,
+                'Rd': SecondOrder.Rd
+            }
+            self._filter_props = {
+                'C1': None,
+                'L1': None,
+                'w0': None,
+                'Cd': None,
+                'Rd': None
+            }
+        elif self.order == 4:
+            pass
 
     def _assign_params(self):
         self._init_params()
@@ -52,15 +80,20 @@ class Filter:
                 self._filter_params[__param] = self._params[self.optimisation][str(
                     self.order)]['parameters'][__param]
 
-    def _assign_props(self, props):
+    def _assign_props(self, props=None):
         self._init_props()
-        for __prop in props:
-            self._primary_props[__prop] = props[__prop]
+        if props is not None:
+            for __prop in props:
+                if __prop in self._filter_props:
+                    self._filter_props[__prop] = props[__prop]
+
+    def _check_args(self, kwargs):
+        pass
 
     @property
     def optimisation(self):
         if not hasattr(self, '_optimisation'):
-            self._optimisation = 'critical'
+            self._optimisation = self.__default_optimisation
         return self._optimisation
 
     @optimisation.setter
@@ -74,7 +107,7 @@ class Filter:
     @property
     def order(self):
         if not hasattr(self, '_order'):
-            self._order = 2
+            self._order = self.__default_order
         return self._order
 
     @order.setter
@@ -84,44 +117,4 @@ class Filter:
         except ValueError:
             raise ValueError("order must be of type integer") from None
         self._assign_params()
-
-    @property
-    def f0(self):
-        return self.w0 / (np.pi*2)
-
-    # @f0.setter
-    # def f0(self, frequency: int):
-    #     if frequency > 0:
-    #         self.w0 = 2 * np.pi * frequency
-    #     else:
-    #         raise ValueError(f'Invalid frequency value: {frequency}')
-
-    # primary property
-    @property
-    def w0(self):
-        return self._w0
-
-    # @w0.setter
-    # def w0(self, frequency):
-    #     if frequency > 0:
-    #         self._w0 = frequency
-    #     else:
-    #         raise ValueError(f'Invalid frequency value: {frequency}')
-
-    # primary property
-    @property
-    def C1(self):
-        return self._C1
-
-    # primary property
-    @property
-    def L1(self):
-        pass
-
-    @property
-    def Cd(self):
-        pass
-
-    @property
-    def Rd(self):
-        pass
+        self._assign_props()
