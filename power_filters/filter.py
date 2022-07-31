@@ -4,7 +4,7 @@ import numpy as np
 import json
 import functools
 
-from helpers import *
+from helpers import SecondOrder, FourthOrder
 
 
 class Filter:
@@ -14,13 +14,14 @@ class Filter:
         # class default variables
         self.__default_order = 2
         self.__default_optimisation = 'critical'
+        self._elements = []
 
         self.order = order
         self.optimisation = optimisation
         self._damping_stage = damping_stage
 
+        self._init_props()
         self._assign_params()
-        self._assign_props(kwargs)
 
     def design_filter(self, *args, **kwargs):
 
@@ -32,16 +33,15 @@ class Filter:
             self.optimisation = kwargs.pop('optimisation')
 
         self._assign_params()
-        self._assign_props(kwargs)
 
-        for __prop in self._filter_props:
-            if self._filter_props[__prop] is None:
-                self._filter_props[__prop] = getattr(
-                    self._filter_eqs['Class'], str(__prop))(self._filter_props, self._filter_params)
+        # for __prop in self._filter_props:
+        #     if self._filter_props[__prop] is None:
+        #         self._filter_props[__prop] = getattr(
+        #             self._filter_eqs['Class'], str(__prop))(self._filter_props, self._filter_params)
 
         # should return dict containing filter information
         #   - filter parameters, properties, etc.
-        return self._filter_props
+        return None
 
     def _load_params(self):
         try:
@@ -54,31 +54,25 @@ class Filter:
         self._filter_params = {}
 
     def _init_props(self):
-        if self.order == 2:
-            self._filter_eqs = {
-                'Class': SecondOrder,
-                'C1': SecondOrder.C1,
-                'L1': SecondOrder.L1,
-                'w0': SecondOrder.w0,
-                'Cd': SecondOrder.Cd,
-                'Rd': SecondOrder.Rd
-            }
-            self._filter_props = {
-                'C1': None,
-                'L1': None,
-                'w0': None,
-                'Cd': None,
-                'Rd': None
-            }
-        elif self.order == 4:
-            pass
+        self._filter_props = {}
+        for __prop in self._params[str(self.order)]['elements']:
+            self._filter_props[__prop] = {}
+            self._filter_props[__prop]['value'] = None
+            if self.order == 2:
+                if hasattr(SecondOrder, __prop):
+                    self._filter_props[__prop]['eq'] = getattr(
+                        SecondOrder, __prop)
+            elif self.order == 4:
+                if hasattr(FourthOrder, __prop):
+                    self._filter_props[__prop]['eq'] = getattr(
+                        FourthOrder, __prop)
 
     def _assign_params(self):
         self._init_params()
         if self.optimisation and self.order:
-            for __param in self._params[self.optimisation][str(self.order)]['parameters'].keys():
-                self._filter_params[__param] = self._params[self.optimisation][str(
-                    self.order)]['parameters'][__param]
+            for __param in self._params[str(self.order)][self.optimisation]['parameters'].keys():
+                self._filter_params[__param] = self._params[str(
+                    self.order)][self.optimisation]['parameters'][__param]
 
     def _assign_props(self, props=None):
         self._init_props()
@@ -117,4 +111,3 @@ class Filter:
         except ValueError:
             raise ValueError("order must be of type integer") from None
         self._assign_params()
-        self._assign_props()

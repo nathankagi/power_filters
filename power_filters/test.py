@@ -72,14 +72,14 @@ filters = {
     
 
 from filter import Filter
-filt = Filter(order = 4, optimisation='butterworth')
+filt = Filter(order = 2, optimisation='bessel')
 # print(filt._filter_params)
 # filt.order = 2
 # print(filt._filter_params)
 # filt.order = 4
 # print(filt._filter_params)
 # print(filt._filter_props)
-print(filt.design_filter(order=2, C1=10e-6, w0=10000))
+print(filt.design_filter(order=2, C1=20e-6, w0=20000))
 
 
 
