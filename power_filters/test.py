@@ -34,27 +34,6 @@ filters = {
         bes['name'] : bes,
         crit['name'] : crit
         }
-
-# def TestClass:
-#     def __init__(self, *args, **kwargs):
-#         pass
-    
-#     def design_filter(self, **kwargs):
-#         """
-        
-
-#         Parameters
-#         ----------
-#         **kwargs : TYPE
-#             DESCRIPTION.
-
-#         Returns
-#         -------
-#         None.
-
-#         """
-#         self._assign_params()
-#         self._assign_props(kwargs)
     
 # with open("test.json", "w") as outfile:
 #     json.dump(filters, outfile)
@@ -72,7 +51,7 @@ filters = {
     
 
 from filter import Filter
-filt = Filter(order = 2, optimisation='bessel')
+filt = Filter(order = 2, optimisation='bessel', C1=20, L1=10, b=1, c=2, d=3)
 # print(filt._filter_params)
 # filt.order = 2
 # print(filt._filter_params)
@@ -81,6 +60,26 @@ filt = Filter(order = 2, optimisation='bessel')
 # print(filt._filter_props)
 print(filt.design_filter(order=2, C1=20e-6, w0=20000))
 
+
+class Test:
+    def __init__(self, value):
+        self._value = value
+    
+    def test(self):
+        return self._value
+
+    def built(self):
+        self.prop = property(self.test)
+
+class DictObj:
+    def __init__(self, in_dict:dict):
+        assert isinstance(in_dict, dict)
+        for key, val in in_dict.items():
+            if isinstance(val, (list, tuple)):
+               setattr(self, key, [DictObj(x) if isinstance(x, dict) else x for x in val])
+            else:
+               setattr(self, key, DictObj(val) if isinstance(val, dict) else val)
+               
 
 
 
