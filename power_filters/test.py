@@ -58,7 +58,7 @@ filt = Filter(order = 2, optimisation='bessel', C1=20, L1=10, b=1, c=2, d=3)
 # filt.order = 4
 # print(filt._filter_params)
 # print(filt._filter_props)
-print(filt.design_filter(order=2, C1=20e-6, w0=20000))
+print(filt.design_filter(order=2, C1=20e-6, L1=20e-5))
 
 
 class Test:

@@ -16,11 +16,9 @@
       "order": 2,
       "description": "2nd-order low-pass filter",
       "parameters": {
-        "a1": 0.6656,
-        "a2": 1.1402,
-        "b2": 0.4128,
-        "a3": 0.6216,
-        "b3": 0.3245
+        "a1": 0.756,
+        "a2": 0.9996,
+        "b2": 0.4772
       }
     },
     "butterworth": {
@@ -38,7 +36,7 @@
     "elements": ["w0", "L1", "L2", "C2", "C1", "Cd", "Rd"],
     "critical": {
       "optimisation": "critical",
-      "order": 2,
+      "order": 4,
       "description": "4th-order low-pass filter",
       "parameters": {
         "a1": 0.3856,
@@ -50,17 +48,19 @@
     },
     "bessel": {
       "optimisation": "bessel",
-      "order": 2,
+      "order": 4,
       "description": "4th-order low-pass filter",
       "parameters": {
-        "a1": 0.756,
-        "a2": 0.9996,
-        "b2": 0.4772
+        "a1": 0.6656,
+        "a2": 1.1402,
+        "b2": 0.4128,
+        "a3": 0.6216,
+        "b3": 0.3245
       }
     },
     "butterworth": {
       "optimisation": "butterworth",
-      "order": 2,
+      "order": 4,
       "description": "4th-order low-pass filter",
       "parameters": {
         "a1": 1.0,
